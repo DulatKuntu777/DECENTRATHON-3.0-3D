@@ -33545,6 +33545,7 @@ GameObject:
   - component: {fileID: 2052848379}
   - component: {fileID: 2052848381}
   - component: {fileID: 2052848380}
+  - component: {fileID: 2052848382}
   m_Layer: 0
   m_Name: 1ASPHALT_SUB4
   m_TagString: Untagged
@@ -33616,6 +33617,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052848378}
+  m_Mesh: {fileID: 4300422, guid: bdad187e97dadca468c454a2bd946285, type: 3}
+--- !u!64 &2052848382
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052848378}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300422, guid: bdad187e97dadca468c454a2bd946285, type: 3}
 --- !u!1 &2059180958
 GameObject:
@@ -36028,7 +36051,7 @@ MonoBehaviour:
   maximumEngineRPM: 7000
   engineTorque: 1000
   brakeTorque: 5000
-  maximumSpeed: 100
+  maximumSpeed: 50
   direction: 1
   finalDriveRatio: 3.2
   highSpeedSteerAngle: 100
@@ -36481,6 +36504,7 @@ GameObject:
   - component: {fileID: 8687569901437009858}
   - component: {fileID: 8687569869237530356}
   - component: {fileID: 8771508033692129823}
+  - component: {fileID: 8771508033692129824}
   m_Layer: 0
   m_Name: Prototype (8W)
   m_TagString: Untagged
@@ -37635,7 +37659,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8720936100830531612}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7354567f52ea46a196d1bd9668dcce57, type: 3}
   m_Name: 
@@ -37650,13 +37674,33 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   visor: {fileID: 759597742}
+  angleWeight: 2
   inputbrake: 0
   inputSteer: 0
   inputThrottle: 0
   inputBoost: 0
   carControl: {fileID: 8687569868799839322}
   inputs: {fileID: 8720500138954976992}
+  waipointCalc: {fileID: 8771508033692129824}
   brake: 0
+--- !u!114 &8771508033692129824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8720936100830531612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a0f215fc58f47efbbe7512d5722e45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints: []
+  speed: 5
+  reachThreshold: 0.5
+  currentWaypointIndex: 0
+  direction: {x: 0, y: 0, z: 0}
+  bgCurveObj: {fileID: 1738558115}
 --- !u!65 &8783036898776940914
 BoxCollider:
   m_ObjectHideFlags: 0
