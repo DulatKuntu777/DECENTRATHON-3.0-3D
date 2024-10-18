@@ -27615,6 +27615,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1738558117}
   - component: {fileID: 1738558116}
+  - component: {fileID: 1738558119}
+  - component: {fileID: 1738558118}
   m_Layer: 0
   m_Name: Curve
   m_TagString: Untagged
@@ -27792,9 +27794,9 @@ MonoBehaviour:
     curve: {fileID: 1738558116}
     fieldsValues: []
   - controlType: 2
-    positionLocal: {x: 162.38635, y: 16.488277, z: 580.5046}
-    controlFirstLocal: {x: -4.823044, y: 0.0010738373, z: 18.85144}
-    controlSecondLocal: {x: 6.118883, y: -0.0010735338, z: -11.49667}
+    positionLocal: {x: 162.92688, y: 16.488277, z: 580.27765}
+    controlFirstLocal: {x: -5.794052, y: 0.0010738373, z: 18.402039}
+    controlSecondLocal: {x: 4.3641663, y: -0.0010738373, z: -13.579956}
     pointTransform: {fileID: 0}
     curve: {fileID: 1738558116}
     fieldsValues: []
@@ -28017,6 +28019,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1738558118
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738558115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62cd433e62a5ee04c956c0f388f66df1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showHandles: 0
+  hidden: 0
+  parent: {fileID: 1738558119}
+  ccName: 
+  splitMode: 0
+  partsTotal: 30
+  partsPerSection: 30
+  doNotOptimizeStraightLines: 1
+  useLocal: 0
+  spheresScale: 1.5
+  spheresColor: {r: 1, g: 0.9042401, b: 0, a: 1}
+  spheresCount: 100
+--- !u!114 &1738558119
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738558115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6d20671ad38ded4fa2362df353b9a31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showHandles: 1
+  hidden: 0
+  parent: {fileID: 0}
+  ccName: 
+  fields: 1
+  mathType: 0
+  sectionParts: 8
+  optimizeStraightLines: 0
+  tolerance: 0.2
+  usePositionToCalculateTangents: 0
+  updateMode: 0
+  rendererForUpdateCheck: {fileID: 0}
+  mathChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  spheresScale: 1
+  spheresColor: {r: 1, g: 1, b: 1, a: 1}
+  spheresCount: 100
 --- !u!1 &1740688998
 GameObject:
   m_ObjectHideFlags: 0
