@@ -1,28 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using BansheeGz.BGSpline.Components;
 using UnityEngine.Serialization;
 
 public class CarWaypointFollower : MonoBehaviour
 {
-    public List<Vector3> waypoints = new ();          // Массив точек пути
-    public float speed = 5f;             // Скорость движения автомобиля
-    public float reachThreshold = 0.5f;  // Расстояние, при котором считается, что точка достигнута
+    public List<Vector3> waypoints = new List<Vector3>();          // Массив точек пути
 
-    public int currentWaypointIndex;    // Текущий индекс точки пути
-    [FormerlySerializedAs("Direction")] public Vector3 direction; 
-    
-    [Header("Links")] 
+    [Header("Links")]
     [SerializeField] private GameObject bgCurveObj;
 
     private BGCcSplitterPolyline polylineSplitter;
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        if(currentWaypointIndex >= 0 && currentWaypointIndex < waypoints.Count)
-            Gizmos.DrawSphere(waypoints[currentWaypointIndex], 2f);
-    }
+    private int currentWaypointIndex;      // Текущий индекс точки пути
+    public Vector3 Direction;              // Направление на следующую точку пути
+
+    private AI carController;   // Ссылка на CarController
 
     private void Awake()
     {
@@ -30,16 +24,52 @@ public class CarWaypointFollower : MonoBehaviour
         waypoints = polylineSplitter.Positions;
     }
 
-    void Start()
+    private void Start()
     {
+        // Получаем ссылку на CarController
+        carController = GetComponent<AI>();
+
         // Находим ближайшую точку пути при старте
         currentWaypointIndex = FindClosestWaypointIndex();
+        UpdateDirection(); // Инициализируем направление
+
+        // Инициализируем upcomingWaypoints
+        UpdateUpcomingWaypoints();
     }
-    
-    void Update()
+
+    private void Update()
     {
         UpdateWaypointIndex();
+        UpdateUpcomingWaypoints();
         UpdateDirection();
+    }
+
+    private void UpdateUpcomingWaypoints()
+    {
+        // Проверяем, что carController не null
+        if (carController != null)
+        {
+            // Очищаем список перед заполнением
+            carController.upcomingWaypoints.Clear();
+
+            int totalWaypoints = waypoints.Count;
+            int currentIndex = currentWaypointIndex;
+
+            // Заполняем список точками впереди автомобиля
+            for (int i = 1; i <= carController.lookAheadPoints; i++)
+            {
+                int nextIndex = (currentIndex + i) % totalWaypoints;
+                Vector3 nextWaypoint = waypoints[nextIndex];
+                carController.upcomingWaypoints.Add(nextWaypoint);
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        if (currentWaypointIndex >= 0 && currentWaypointIndex < waypoints.Count)
+            Gizmos.DrawWireSphere(waypoints[currentWaypointIndex], 2f);
     }
 
     // Метод для нахождения ближайшей точки пути при старте
@@ -99,13 +129,13 @@ public class CarWaypointFollower : MonoBehaviour
         Vector3 nextWaypointPosition = new Vector3(waypoints[nextWaypointIndex].x, 0, waypoints[nextWaypointIndex].z);
 
         // Вычисляем направление на следующую точку
-        direction = (nextWaypointPosition - carPosition).normalized;
+        Direction = (nextWaypointPosition - carPosition).normalized;
     }
 
     // Опционально: Метод для визуализации текущего прогресса (например, в GUI)
     void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 300, 20), "Текущий индекс точки пути: " + currentWaypointIndex);
-        GUI.Label(new Rect(10, 30, 300, 20), "Направление на следующую точку: " + direction);
+        GUI.Label(new Rect(10, 30, 300, 20), "Направление на следующую точку: " + Direction);
     }
 }
