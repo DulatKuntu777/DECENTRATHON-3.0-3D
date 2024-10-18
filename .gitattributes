@@ -1,0 +1,2 @@
+*.obj filter=lfs diff=lfs merge=lfs -text
+Assets/_ExternalAssets/RealisticRaceTrack/Model/RealisticRaceTrackModel.obj filter=lfs diff=lfs merge=lfs -text
