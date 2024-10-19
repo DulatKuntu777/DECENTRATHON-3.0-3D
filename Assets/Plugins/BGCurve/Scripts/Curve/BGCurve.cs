@@ -86,15 +86,6 @@ namespace BansheeGz.BGSpline.Curve
 
         //static reusable list for storing points index
         private static readonly List<int> pointsIndexesList = new List<int>();
-            
-            private void OnDrawGizmos(){
-                BGCcSplitterPolyline polylineSplitter = this.GetComponent<BGCcSplitterPolyline>();
-                for (int i = 0; i < polylineSplitter.Points.Count; i++)
-                {
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawSphere(polylineSplitter.Points[i].Position, 1);
-                }
-            }
 
         #endregion
 

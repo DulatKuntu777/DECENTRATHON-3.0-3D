@@ -1,7 +1,7 @@
 //----------------------------------------------
 //            Simple Car Controller
 //
-// Copyright © 2014 - 2023 BoneCracker Games
+// Copyright ï¿½ 2014 - 2023 BoneCracker Games
 // http://www.bonecrackergames.com
 //
 //----------------------------------------------
@@ -52,6 +52,8 @@ public class SCC_InputManager : SCC_Singleton<SCC_InputManager> {
 
         }
 
+        if(SCC_Dashboard. AIEnabled == false) return;
+        
         inputs.throttleInput = inputActions.Vehicle.Throttle.ReadValue<float>();
         inputs.brakeInput = inputActions.Vehicle.Brake.ReadValue<float>();
         inputs.steerInput = inputActions.Vehicle.Steering.ReadValue<float>();

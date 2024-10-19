@@ -33,6 +33,7 @@ public class SCC_Dashboard : MonoBehaviour {
     private float orgRPMNeedleAngle = 0f;
     private float orgKMHNeedleAngle = 0f;
 
+    public GameObject uiInput;
     private void Awake() {
 
         //  Getting original angle values of the needles.
@@ -63,6 +64,38 @@ public class SCC_Dashboard : MonoBehaviour {
         Quaternion target2 = Quaternion.Euler(0f, 0f, orgRPMNeedleAngle - (rpm / 40f));
         RPMNeedle.rotation = Quaternion.Slerp(RPMNeedle.rotation, target2, Time.deltaTime * 2f);
 
+        SCC_InputManager.Instance.inputs.steerInput = steer;
+        SCC_InputManager.Instance.inputs.throttleInput = gas;
+        SCC_InputManager.Instance.inputs.brakeInput = brake;
     }
 
+    private float brake;
+    private float gas;
+    private float steer;
+
+    public static bool AIEnabled = false;
+    public void SetAI(bool condition)
+    {
+        uiInput.SetActive(!condition);
+        AIEnabled = condition;
+    }
+    public void SetBrake(float v)
+    {
+        brake = v;
+        SCC_InputManager.Instance.inputs.brakeInput = v;
+    }
+    public void SetGas(float v)
+    {
+        gas = v;
+
+        
+    }
+    public void SetLeft(float v)
+    {
+        steer = -v;
+    }
+    public void SetRight(float v)
+    {
+        steer = v;
+    }
 }

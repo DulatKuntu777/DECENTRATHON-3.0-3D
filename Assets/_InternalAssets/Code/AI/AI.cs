@@ -18,9 +18,9 @@ public class AI : SerializedMonoBehaviour
     [SerializeField] private LayerMask enemyLayerMask;
     
     [Header("Vehicle Dynamics Settings")]
-    public float maxSteerAngle = 30f; // Максимальный угол поворота колес в градусах
-    public float maxDrag = 9.81f;     // Ускорение свободного падения
-    public float minDrag = 9.81f;     // Ускорение свободного падения
+    public float maxSteerAngle = 30f;
+    public float maxDrag = 9.81f; 
+    public float minDrag = 9.81f;
     
     [Header("Getters")] 
     public float brakeInput = 0;
@@ -48,16 +48,12 @@ public class AI : SerializedMonoBehaviour
     private void Awake()
     {
         OnValidate();
-        carControl = GetComponent<SCC_Drivetrain>();
-        inputs = GetComponent<SCC_InputProcessor>();
-        waipointCalc = GetComponent<CarWaypointFollower>();
-        maxSpeedCalculator = GetComponent<MaxSpeedCalculator>();
     }
 
     private void OnValidate()
     {
-        carControl ??= GetComponent<SCC_Drivetrain>();
-        inputs ??= GetComponent<SCC_InputProcessor>();
+        carControl ??= GetComponentInChildren<SCC_Drivetrain>();
+        inputs ??= GetComponentInChildren<SCC_InputProcessor>();
         waipointCalc ??= GetComponent<CarWaypointFollower>();
         visor ??= GetComponentInChildren<Visor>();
     }
@@ -65,13 +61,18 @@ public class AI : SerializedMonoBehaviour
     private void OnEnable()
     {
         visor.condition = true;
+        inputs.receiveInputsFromInputManager = false;
+    }
+
+    private void OnDisable()
+    {
+        visor.condition = false;
+        inputs.receiveInputsFromInputManager = true;
     }
 
     private void Start()
     {
-        inputs.receiveInputsFromInputManager = false;
         rb = GetComponent<Rigidbody>();
-        
     }
 
     void Update()
@@ -80,6 +81,7 @@ public class AI : SerializedMonoBehaviour
         brakeInput = 0;
         lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 25f, 2f, 10f);
         ThortleBrakeControl();
+        ReturnToRoad();
         
         inputs.inputs.steerInput = inputSteer + (Mathf.Clamp(visor.steerValue, -1, 1) * castMultiplicator);
         inputs.inputs.throttleInput = throttleInput;
@@ -100,8 +102,7 @@ public class AI : SerializedMonoBehaviour
         throttleInput = throttleValue;
         brakeInput = Mathf.Clamp01( brakeWeight - throttleValue);
     }
-
-    float UpdateCarState()
+    private float UpdateCarState()
     {
         int currentWaypointIndex = waipointCalc.currentWaypointIndex;
         List<WaypointThrottle> throttleValues = trackAnalyzer.throttleValues;
@@ -114,7 +115,6 @@ public class AI : SerializedMonoBehaviour
 
         return 0;
     }
-
      Vector3 FindFurthestAccessiblePoint(out float angleToTarget)
     {
         angleToTarget = 0f; // Инициализируем выходной параметр
@@ -173,39 +173,47 @@ public class AI : SerializedMonoBehaviour
 
         return furthestPoint;
     }
-    void MoveTowardsTarget(Vector3 target)
+    private void MoveTowardsTarget(Vector3 target)
     {
         Vector3 directionToTarget = (target - transform.position).normalized;
 
         Vector3 forward = transform.forward;
         float angle = Vector3.SignedAngle(forward, directionToTarget, Vector3.up);
 
-        float steerInput = Mathf.Clamp(angle / maxSteerAngle, -1f, 1f); // Предполагаем, что максимальный угол поворота 45 градусов
+        float steerInput = Mathf.Clamp(angle / maxSteerAngle, -1f, 1f); 
         inputSteer = (Mathf.Lerp(inputSteer, steerInput, 15 * Time.deltaTime));
+    }
+
+    private float lowSpeedTime = 3;
+    private void ReturnToRoad()
+    {
+        if (carControl.speed < 5)
+        {
+            lowSpeedTime -= Time.deltaTime;
+            if (lowSpeedTime <= 0)
+            {
+                rb.position = targetPoint + new Vector3(0, 1, 0);
+                lowSpeedTime = 3;
+            }
+        }
     }
     void OnDrawGizmos()
     {
-        // Визуализация BoxCast
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // Полупрозрачный красный
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); 
         if (boxCastDirection != Vector3.zero)
         {
-            // Центр коробки
             Vector3 boxCenter = transform.position + boxCastDirection * boxCastDistance;
 
-            // Размеры коробки
             Vector3 boxSize = new Vector3(boxCastHalfWidth * 2, boxCastHalfHeight * 2, boxCastHalfWidth * 2);
 
-            // Рисуем коробку, представляющую конечное положение BoxCast
             Gizmos.matrix = Matrix4x4.TRS(boxCenter, boxCastRotation, Vector3.one);
             Gizmos.DrawWireCube(Vector3.zero, boxSize);
 
-            // Рисуем линию от начальной позиции до конечной позиции BoxCast
             Gizmos.color = Color.yellow;
             Gizmos.matrix = Matrix4x4.identity;
             Gizmos.DrawLine(transform.position, boxCenter);
         }
 
-        // Визуализация направления к targetPoint
         if (targetPoint != Vector3.zero)
         {
             Gizmos.color = Color.green;
@@ -213,7 +221,6 @@ public class AI : SerializedMonoBehaviour
             Gizmos.DrawSphere(targetPoint, 0.5f);
         }
 
-        // Визуализация upcomingWaypoints
         Gizmos.color = Color.cyan;
         foreach (Vector3 waypoint in upcomingWaypoints)
         {
