@@ -26,6 +26,7 @@ public class VehicleAIManager : MonoBehaviour
             if (instance == null)
             {
                 instance = this;
+                Debug.Log("Added");
             }
             else
             {

@@ -71,8 +71,7 @@ public class AI : SerializedMonoBehaviour
     {
         visor.condition = true;
         inputs.receiveInputsFromInputManager = false;
-        VehicleAIManager.instance.AddVehicle(this);
-        SetComplexity(VehicleAIManager.instance.currentComplexity);
+        
     }
    
     private void OnDisable()
@@ -84,6 +83,8 @@ public class AI : SerializedMonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        VehicleAIManager.instance.AddVehicle(this);
+                SetComplexity(VehicleAIManager.instance.currentComplexity);
     }
 
     private void Update()

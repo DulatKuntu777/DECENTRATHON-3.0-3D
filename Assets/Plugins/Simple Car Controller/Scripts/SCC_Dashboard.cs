@@ -75,7 +75,7 @@ public class SCC_Dashboard : MonoBehaviour {
 
     public void SetAI(bool condition)
     {
-        //uiInput.SetActive(!condition);
+        uiInput.SetActive(!condition);
         //AIEnabled = condition;
     }
     public void SetBrake(float v)
