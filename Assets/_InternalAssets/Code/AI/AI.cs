@@ -30,12 +30,12 @@ public class AI : SerializedMonoBehaviour
     public List<Vector3> upcomingWaypoints = new List<Vector3>();
 
     [Header("Links")] 
-    [SerializeField] private SCC_Drivetrain carControl;
-    [SerializeField] private SCC_InputProcessor inputs;
-    [SerializeField] private CarWaypointFollower waipointCalc;
     [SerializeField] private TrackAnalyzer trackAnalyzer;
-    [SerializeField] private MaxSpeedCalculator maxSpeedCalculator;
 
+    private SCC_Drivetrain carControl;
+    private SCC_InputProcessor inputs;
+    private MaxSpeedCalculator maxSpeedCalculator;
+    private CarWaypointFollower waipointCalc;
     private Rigidbody rb;
     private Vector3 boxCastDirection;
     private Vector3 targetPoint;
@@ -48,6 +48,10 @@ public class AI : SerializedMonoBehaviour
     private void Awake()
     {
         OnValidate();
+        carControl = GetComponent<SCC_Drivetrain>();
+        inputs = GetComponent<SCC_InputProcessor>();
+        waipointCalc = GetComponent<CarWaypointFollower>();
+        maxSpeedCalculator = GetComponent<MaxSpeedCalculator>();
     }
 
     private void OnValidate()
@@ -72,10 +76,12 @@ public class AI : SerializedMonoBehaviour
 
     void Update()
     {
+        throttleInput = 0;
+        brakeInput = 0;
         lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 25f, 2f, 10f);
         ThortleBrakeControl();
         
-        inputs.inputs.steerInput = inputSteer;
+        inputs.inputs.steerInput = inputSteer + (Mathf.Clamp(visor.steerValue, -1, 1) * castMultiplicator);
         inputs.inputs.throttleInput = throttleInput;
         inputs.inputs.brakeInput = brakeInput;
     }
@@ -88,7 +94,9 @@ public class AI : SerializedMonoBehaviour
         MoveTowardsTarget(targetPoint);
         
         float throttleValue = UpdateCarState();
+        float maxDrag = this.maxDrag * (carControl.speed / carControl.maximumSpeed);
         rb.drag = Mathf.Clamp((1 - throttleValue) * 2, minDrag, maxDrag);
+        
         throttleInput = throttleValue;
         brakeInput = Mathf.Clamp01( brakeWeight - throttleValue);
     }
@@ -141,6 +149,7 @@ public class AI : SerializedMonoBehaviour
 
                 // Выходим из цикла
                 boxCastPerformed = true;
+                break;
             }
         }
 
@@ -172,13 +181,12 @@ public class AI : SerializedMonoBehaviour
         float angle = Vector3.SignedAngle(forward, directionToTarget, Vector3.up);
 
         float steerInput = Mathf.Clamp(angle / maxSteerAngle, -1f, 1f); // Предполагаем, что максимальный угол поворота 45 градусов
-        inputSteer = (Mathf.Lerp(inputSteer, steerInput, 15 * Time.deltaTime)) + Mathf.Clamp( visor.steerValue, -1, 1) * castMultiplicator;
+        inputSteer = (Mathf.Lerp(inputSteer, steerInput, 15 * Time.deltaTime));
     }
     void OnDrawGizmos()
     {
         // Визуализация BoxCast
         Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // Полупрозрачный красный
-        FindFurthestAccessiblePoint(out angleToTarget);
         if (boxCastDirection != Vector3.zero)
         {
             // Центр коробки
