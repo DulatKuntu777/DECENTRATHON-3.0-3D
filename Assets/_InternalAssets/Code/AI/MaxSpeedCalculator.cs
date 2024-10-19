@@ -11,7 +11,8 @@ public class MaxSpeedCalculator : MonoBehaviour
 
     void Update()
     {
-        // Массив колёс
+        return;
+        
         WheelCollider[] wheels = new WheelCollider[] { frontLeftWheel, frontRightWheel, rearLeftWheel, rearRightWheel };
 
         float wheelBase = Vector3.Distance(frontLeftWheel.transform.position, rearLeftWheel.transform.position);

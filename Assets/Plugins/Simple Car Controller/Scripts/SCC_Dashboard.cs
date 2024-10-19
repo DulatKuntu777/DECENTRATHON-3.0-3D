@@ -73,11 +73,10 @@ public class SCC_Dashboard : MonoBehaviour {
     private float gas;
     private float steer;
 
-    public static bool AIEnabled = false;
     public void SetAI(bool condition)
     {
-        uiInput.SetActive(!condition);
-        AIEnabled = condition;
+        //uiInput.SetActive(!condition);
+        //AIEnabled = condition;
     }
     public void SetBrake(float v)
     {

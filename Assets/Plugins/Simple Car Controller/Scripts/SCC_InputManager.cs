@@ -52,7 +52,7 @@ public class SCC_InputManager : SCC_Singleton<SCC_InputManager> {
 
         }
 
-        if(SCC_Dashboard. AIEnabled == false) return;
+        //if(SCC_Dashboard. AIEnabled == false) return;
         
         inputs.throttleInput = inputActions.Vehicle.Throttle.ReadValue<float>();
         inputs.brakeInput = inputActions.Vehicle.Brake.ReadValue<float>();

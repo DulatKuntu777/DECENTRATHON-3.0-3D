@@ -3,9 +3,14 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+public enum Complexity
+{
+    Hard,
+    Medium,
+    Easy
+}
 public class AI : SerializedMonoBehaviour
 {
-    public Visor visor;
     [Header("Settings")] 
      public int lookAheadPoints = 5; // Количество точек перед автомобилем
      
@@ -27,11 +32,12 @@ public class AI : SerializedMonoBehaviour
     public float inputSteer = 0;
     public float throttleInput = 0;
 
-    public List<Vector3> upcomingWaypoints = new List<Vector3>();
-
     [Header("Links")] 
     [SerializeField] private TrackAnalyzer trackAnalyzer;
+    [SerializeField] private Visor visor;
 
+    public List<Vector3> upcomingWaypoints = new List<Vector3>();
+    
     private SCC_Drivetrain carControl;
     private SCC_InputProcessor inputs;
     private MaxSpeedCalculator maxSpeedCalculator;
@@ -43,8 +49,11 @@ public class AI : SerializedMonoBehaviour
     private float boxCastDistance;
     private float previousSlowDownIntensity = 0f;
     private Quaternion boxCastRotation = Quaternion.identity;
+    private float angleToTarget;
+    private float lowSpeedTime = 3;
 
-
+    private Complexity complexity = Complexity.Hard;
+    
     private void Awake()
     {
         OnValidate();
@@ -62,8 +71,10 @@ public class AI : SerializedMonoBehaviour
     {
         visor.condition = true;
         inputs.receiveInputsFromInputManager = false;
+        VehicleAIManager.instance.AddVehicle(this);
+        SetComplexity(VehicleAIManager.instance.currentComplexity);
     }
-
+   
     private void OnDisable()
     {
         visor.condition = false;
@@ -75,11 +86,17 @@ public class AI : SerializedMonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    private void Update()
     {
         throttleInput = 0;
         brakeInput = 0;
-        lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 25f, 2f, 10f);
+        if(complexity == Complexity.Hard)
+            lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 20f, 2f, 10f);
+        else if (complexity == Complexity.Medium)
+            lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 25f, 2f, 6);
+        else if (complexity == Complexity.Easy)
+            lookAheadPoints = (int)Mathf.Clamp(carControl.speed / 30f, 1f, 4);
+        
         ThortleBrakeControl();
         ReturnToRoad();
         
@@ -87,8 +104,6 @@ public class AI : SerializedMonoBehaviour
         inputs.inputs.throttleInput = throttleInput;
         inputs.inputs.brakeInput = brakeInput;
     }
-
-    [SerializeField] float angleToTarget;
 
     private void ThortleBrakeControl()
     {
@@ -115,7 +130,7 @@ public class AI : SerializedMonoBehaviour
 
         return 0;
     }
-     Vector3 FindFurthestAccessiblePoint(out float angleToTarget)
+    private Vector3 FindFurthestAccessiblePoint(out float angleToTarget)
     {
         angleToTarget = 0f; // Инициализируем выходной параметр
 
@@ -184,7 +199,6 @@ public class AI : SerializedMonoBehaviour
         inputSteer = (Mathf.Lerp(inputSteer, steerInput, 15 * Time.deltaTime));
     }
 
-    private float lowSpeedTime = 3;
     private void ReturnToRoad()
     {
         if (carControl.speed < 5)
@@ -192,9 +206,41 @@ public class AI : SerializedMonoBehaviour
             lowSpeedTime -= Time.deltaTime;
             if (lowSpeedTime <= 0)
             {
-                rb.position = targetPoint + new Vector3(0, 1, 0);
-                lowSpeedTime = 3;
+                int currentWaypointIndex = waipointCalc.currentWaypointIndex;
+                Quaternion targetRotation = Quaternion.LookRotation(boxCastDirection);
+                rb.position = waipointCalc.waypoints[currentWaypointIndex] + new Vector3(0, 1, 0);
+                rb.rotation = targetRotation;
+                lowSpeedTime = Random.Range(1f, 3f);
             }
+        }
+    }
+    
+    public void SetComplexity(Complexity complexity)
+    {
+        this.complexity = complexity;
+        switch (complexity)
+        {
+            case Complexity.Hard:
+                carControl.maximumSpeed = 150 + Random.Range(5, 25);
+                carControl.engineTorque = 2000 + Random.Range(100, 300);
+                carControl.brakeTorque = 3000;
+                maxDrag = 0.7f;
+                castMultiplicator = 0.25f;
+                break;
+            case Complexity.Medium:
+                carControl.maximumSpeed = 120+ Random.Range(5, 25);
+                carControl.engineTorque = 1900 + Random.Range(100, 300);
+                carControl.brakeTorque = 2000;
+                maxDrag = 0.55f;
+                castMultiplicator = 0.2f;
+                break;
+            case Complexity.Easy:
+                carControl.maximumSpeed = 95 + Random.Range(5, 25);
+                carControl.engineTorque = 1400 + Random.Range(100, 300);
+                carControl.brakeTorque = 2000;
+                maxDrag = 0.45f;
+                castMultiplicator = 0.15f;
+                break;
         }
     }
     void OnDrawGizmos()

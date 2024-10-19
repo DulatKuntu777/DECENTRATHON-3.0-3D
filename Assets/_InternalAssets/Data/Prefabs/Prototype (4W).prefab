@@ -10457,7 +10457,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  visor: {fileID: 5091117110641989858}
   lookAheadPoints: 4
   maxBrakeAngle: 25
   brakeWeight: 0
@@ -10476,13 +10475,13 @@ MonoBehaviour:
   brakeInput: 0
   inputSteer: 0.15282337
   throttleInput: 1
+  trackAnalyzer: {fileID: 0}
+  visor: {fileID: 5091117110641989858}
   upcomingWaypoints:
   - {x: -223.3717, y: 19.212284, z: 994.5214}
   - {x: -203.30255, y: 19.540064, z: 988.3314}
   - {x: -186.70631, y: 19.94951, z: 983.1223}
   - {x: -172.90988, y: 20.394426, z: 978.46344}
-  trackAnalyzer: {fileID: 0}
-  angleToTarget: 5.3691435
 --- !u!114 &787576266956523125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11158,8 +11157,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxSize: {x: 0.5, y: 0.5, z: 0.5}
-  distace: 12
-  hitValue: 0.49175516
+  distace: 15
+  hitValue: 0.5642118
 --- !u!1 &8917300537741327646 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3489895874535663432, guid: afc0cdeb4a9c1e342be9d5e97a3e11c6, type: 3}
@@ -11178,5 +11177,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxSize: {x: 0.5, y: 0.5, z: 0.5}
-  distace: 12
-  hitValue: 0
+  distace: 15
+  hitValue: 0.64200634
