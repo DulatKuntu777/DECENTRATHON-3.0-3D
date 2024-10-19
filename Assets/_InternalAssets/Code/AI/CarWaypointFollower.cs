@@ -13,7 +13,7 @@ public class CarWaypointFollower : MonoBehaviour
 
     private BGCcSplitterPolyline polylineSplitter;
 
-    private int currentWaypointIndex;      // Текущий индекс точки пути
+    public int currentWaypointIndex;      // Текущий индекс точки пути
     public Vector3 Direction;              // Направление на следующую точку пути
 
     private AI carController;   // Ссылка на CarController
